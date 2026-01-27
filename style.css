@@ -1,0 +1,585 @@
+:root {
+    --romantic-red: #d63031;
+    --soft-pink: #fd79a8;
+    --deep-bg: #2d3436;
+    --gold: #dfe6e9;
+    --polaroid-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Floating Hearts Background */
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.heart {
+    position: absolute;
+    color: var(--romantic-red);
+    opacity: 0.5;
+    animation: float 6s linear infinite;
+    font-size: 20px;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Main UI Overlay */
+.overlay {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 4rem;
+    color: var(--soft-pink);
+    text-shadow: 0 0 20px rgba(253, 121, 168, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Collage Area */
+.collage-container {
+    flex: 1;
+    width: 100%;
+    min-height: 400px;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.polaroid {
+    position: absolute;
+    background: white;
+    padding: 12px 12px 40px 12px;
+    box-shadow: var(--polaroid-shadow);
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    z-index: 5;
+    opacity: 0;
+    transform: scale(0) rotate(var(--rot));
+    animation: popUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.polaroid:hover {
+    transform: scale(1.1) rotate(0deg) !important;
+    z-index: 100;
+}
+
+.polaroid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+@keyframes popUp {
+    0% {
+        transform: scale(0) rotate(calc(var(--rot) - 20deg));
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) rotate(var(--rot));
+        opacity: 1;
+    }
+}
+
+/* Final Reveal */
+.fade-out {
+    opacity: 0 !important;
+    transition: opacity 3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#surprise-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 1000;
+    /* Dual Spotlight Effect */
+    background:
+        radial-gradient(circle at 25% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 75% 50%, rgba(255, 255, 255, 0.12) 0%, transparent 60%),
+        #000;
+    pointer-events: none;
+    padding: 0 5%;
+}
+
+#surprise-text {
+    max-width: 45%;
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.2rem;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+    text-align: center;
+}
+
+#surprise-text span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: wordReveal 0.8s ease-out forwards;
+    margin-right: 12px;
+}
+
+@keyframes wordReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#gift-image {
+    width: 800px;
+    /* Balanced size for dual focus */
+    height: auto;
+    filter: brightness(1.05) contrast(1.1) drop-shadow(0 20px 50px rgba(0, 0, 0, 1));
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-20px);
+    animation: revealFromTop 4s cubic-bezier(0.19, 1, 0.22, 1) forwards 1s;
+}
+
+#final-message-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.95) 80%);
+    pointer-events: none;
+}
+
+#final-message {
+    font-family: 'Dancing Script', cursive;
+    font-size: 7rem;
+    color: white;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 20, 147, 0.6);
+    opacity: 0;
+    transform: scale(0.8);
+    animation: finalReveal 3.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes finalReveal {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Sky Finale */
+#sky-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3000;
+    overflow: hidden;
+    background: linear-gradient(180deg, #86c5ff 0%, #b9e6ff 45%, #eaf7ff 100%);
+}
+
+#sky-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 45%),
+        linear-gradient(180deg, #86c5ff 0%, #b9e6ff 45%, #eaf7ff 100%);
+}
+
+.sky-cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 80px;
+    filter: blur(0.2px);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
+    animation: drift 60s linear infinite;
+}
+
+.sky-cloud::before,
+.sky-cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 50%;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+}
+
+.sky-cloud::before {
+    width: 60%;
+    height: 130%;
+    top: -55%;
+    left: 10%;
+}
+
+.sky-cloud::after {
+    width: 45%;
+    height: 100%;
+    top: -40%;
+    right: 8%;
+}
+
+.cloud-1 {
+    width: 260px;
+    height: 80px;
+    top: 10%;
+    left: -20%;
+    animation-duration: 55s;
+}
+
+.cloud-2 {
+    width: 320px;
+    height: 95px;
+    top: 22%;
+    left: -35%;
+    opacity: 0.85;
+    animation-duration: 70s;
+    animation-delay: -10s;
+}
+
+.cloud-3 {
+    width: 220px;
+    height: 70px;
+    top: 35%;
+    left: -25%;
+    opacity: 0.8;
+    animation-duration: 65s;
+    animation-delay: -25s;
+}
+
+.cloud-4 {
+    width: 360px;
+    height: 110px;
+    top: 15%;
+    left: -45%;
+    opacity: 0.78;
+    animation-duration: 80s;
+    animation-delay: -35s;
+}
+
+.cloud-5 {
+    width: 280px;
+    height: 85px;
+    top: 48%;
+    left: -30%;
+    opacity: 0.7;
+    animation-duration: 75s;
+    animation-delay: -20s;
+}
+
+#cloud-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#cloud-frame {
+    position: relative;
+    width: min(820px, 86vw);
+    height: min(480px, 60vh);
+    background: #ffffff;
+    border-radius: 140px;
+    padding: 28px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: translateY(10px) scale(0.82);
+    animation: cloudArrive 1.2s ease-out forwards 0.6s;
+    pointer-events: auto;
+    isolation: isolate;
+}
+
+#cloud-frame::before,
+#cloud-frame::after {
+    content: '';
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+    z-index: 0;
+}
+
+#cloud-frame::before {
+    width: 180px;
+    height: 180px;
+    top: -85px;
+    left: 80px;
+}
+
+#cloud-frame::after {
+    width: 220px;
+    height: 220px;
+    top: -105px;
+    right: 90px;
+}
+
+.cloud-bubble {
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
+    z-index: 1;
+}
+
+.bubble-1 {
+    width: 150px;
+    height: 150px;
+    top: -70px;
+    left: 140px;
+}
+
+.bubble-2 {
+    width: 200px;
+    height: 200px;
+    top: -90px;
+    left: 330px;
+}
+
+.bubble-3 {
+    width: 160px;
+    height: 160px;
+    top: -65px;
+    right: 110px;
+}
+
+#cloud-video {
+    width: 100%;
+    height: 100%;
+    background: #f5fbff;
+    border-radius: 110px;
+    padding: 16px;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.7);
+    animation: cloudVideoPop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 5.2s;
+    pointer-events: auto;
+    z-index: 2;
+}
+
+#final-video {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 90px;
+    background: #0b1620;
+    object-fit: contain;
+}
+
+@keyframes drift {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(140vw);
+    }
+}
+
+@keyframes cloudArrive {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes cloudVideoPop {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.heart-fade-out {
+    opacity: 0 !important;
+    transition: opacity 2s ease !important;
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes revealFromTop {
+    0% {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+        transform: translateY(-20px);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+        transform: translateY(0);
+    }
+}
+
+/* Controls */
+.controls {
+    z-index: 20;
+}
+
+button {
+    background: var(--romantic-red);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: var(--soft-pink);
+    transform: translateY(-3px) scale(1.05);
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.5rem;
+    }
+
+    .polaroid {
+        width: 150px !important;
+        height: 180px !important;
+    }
+
+    #cloud-frame {
+        width: 320px;
+        height: 220px;
+        border-radius: 70px;
+        padding: 14px;
+    }
+
+    #cloud-video {
+        border-radius: 50px;
+        padding: 10px;
+    }
+
+    #final-video {
+        border-radius: 40px;
+    }
+
+    #cloud-frame::before {
+        width: 100px;
+        height: 100px;
+        top: -45px;
+        left: 45px;
+    }
+
+    #cloud-frame::after {
+        width: 120px;
+        height: 120px;
+        top: -60px;
+        right: 50px;
+    }
+
+    .bubble-1 {
+        width: 80px;
+        height: 80px;
+        top: -35px;
+        left: 60px;
+    }
+
+    .bubble-2 {
+        width: 110px;
+        height: 110px;
+        top: -50px;
+        left: 140px;
+    }
+
+    .bubble-3 {
+        width: 90px;
+        height: 90px;
+        top: -40px;
+        right: 50px;
+    }
+}

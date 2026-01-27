@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eterno San Valentín - Collage Mágico</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="hearts-container" id="hearts-bg"></div>
+
+    <div class="overlay">
+        <header>
+            <h1>Nuestros Momentos</h1>
+            <p>Donde cada recuerdo florece...</p>
+        </header>
+
+        <div class="collage-container" id="collage">
+            <!-- Las fotos aparecerán aquí dinámicamente -->
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">Revelar Recuerdos</button>
+            <button id="resetBtn" style="display: none;">Reiniciar</button>
+        </div>
+
+        <div id="surprise-container" class="hidden">
+            <div id="surprise-text">"tu no volveras a estar sola a donde quiera que vayas yo ire contigo..."</div>
+            <img id="gift-image"
+                src="foto de fondo/LS2256-1-1-Lotus-Style-Collar-Colgante-Cruz-Colgante-Acero-Hombre.webp"
+                alt="Sorpresa">
+        </div>
+
+        <div id="final-message-container" class="hidden">
+            <div id="final-message">San Valentín 2026</div>
+        </div>
+
+        <!-- Sky Finale -->
+        <div id="sky-container" class="hidden">
+            <div id="sky-bg">
+                <div class="sky-cloud cloud-1"></div>
+                <div class="sky-cloud cloud-2"></div>
+                <div class="sky-cloud cloud-3"></div>
+                <div class="sky-cloud cloud-4"></div>
+                <div class="sky-cloud cloud-5"></div>
+            </div>
+            <div id="cloud-stage">
+                <div id="cloud-frame">
+                    <span class="cloud-bubble bubble-1"></span>
+                    <span class="cloud-bubble bubble-2"></span>
+                    <span class="cloud-bubble bubble-3"></span>
+                    <div id="cloud-video">
+                        <video id="final-video" src="videos/WhatsApp Video 2026-01-27 at 4.51.28 PM.mp4"></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
