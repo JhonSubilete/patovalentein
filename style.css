@@ -4,6 +4,9 @@
     --deep-bg: #2d3436;
     --gold: #dfe6e9;
     --polaroid-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    --video-frame-width: clamp(240px, 28vw, 360px);
+    --video-frame-radius: 28px;
+    --video-frame-pad: 12px;
 }
 
 * {
@@ -244,6 +247,12 @@ header p {
     z-index: 3000;
     overflow: hidden;
     background: linear-gradient(180deg, #86c5ff 0%, #b9e6ff 45%, #eaf7ff 100%);
+    transition: background 3.5s ease, filter 3.5s ease;
+}
+
+#sky-container.sunset {
+    background: linear-gradient(180deg, #ff9b6a 0%, #ff7f9e 40%, #ffd1a8 100%);
+    filter: saturate(1.35) brightness(1.06);
 }
 
 #sky-bg {
@@ -251,6 +260,86 @@ header p {
     inset: 0;
     background: radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 45%),
         linear-gradient(180deg, #86c5ff 0%, #b9e6ff 45%, #eaf7ff 100%);
+    z-index: 0;
+    transition: background 3.5s ease;
+    overflow: hidden;
+}
+
+#sky-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 230, 190, 0.9) 0%, rgba(255, 200, 160, 0.2) 45%),
+        linear-gradient(180deg, rgba(255, 166, 112, 0.9) 0%, rgba(255, 120, 110, 0.85) 40%, rgba(255, 210, 170, 0.9) 100%);
+    opacity: 0;
+    transition: opacity 3.5s ease;
+    z-index: 0;
+}
+
+#sky-container.sunset #sky-bg {
+    background: radial-gradient(circle at 18% 20%, rgba(255, 230, 220, 0.9) 0%, rgba(255, 230, 220, 0) 45%),
+        linear-gradient(180deg, #ff9b6a 0%, #ff7f9e 40%, #ffd1a8 100%);
+}
+
+#sky-container.sunset #sky-bg::after {
+    opacity: 1;
+}
+
+.sky-duck {
+    position: absolute;
+    font-size: clamp(26px, 4.5vw, 44px);
+    line-height: 1;
+    z-index: 2;
+    opacity: 0.9;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.2));
+    animation: duckFly 28s linear infinite;
+    pointer-events: none;
+    --duck-scale: 1;
+    --duck-tilt: 0deg;
+}
+
+.duck-1 {
+    top: 12%;
+    left: -6%;
+    animation-duration: 26s;
+}
+
+.duck-2 {
+    top: 24%;
+    left: -10%;
+    animation-duration: 30s;
+    animation-delay: -8s;
+    --duck-scale: 0.9;
+    --duck-tilt: -6deg;
+}
+
+.duck-3 {
+    top: 38%;
+    left: -8%;
+    animation-duration: 34s;
+    animation-delay: -16s;
+    --duck-scale: 0.75;
+    --duck-tilt: 8deg;
+}
+
+#ariana-rain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 4;
+}
+
+.ariana-heart {
+    position: absolute;
+    top: -12%;
+    left: 50%;
+    font-weight: 600;
+    color: #ff4d88;
+    font-family: 'Dancing Script', cursive;
+    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    animation: arianaFall 6s linear forwards;
+    white-space: nowrap;
 }
 
 .sky-cloud {
@@ -260,6 +349,13 @@ header p {
     filter: blur(0.2px);
     box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
     animation: drift 60s linear infinite;
+    z-index: 1;
+    transition: background 2.5s ease, box-shadow 2.5s ease;
+}
+
+#sky-container.sunset .sky-cloud {
+    background: rgba(255, 248, 240, 0.95);
+    box-shadow: 0 18px 35px rgba(255, 120, 90, 0.15);
 }
 
 .sky-cloud::before,
@@ -269,6 +365,11 @@ header p {
     background: rgba(255, 255, 255, 0.96);
     border-radius: 50%;
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+}
+
+#sky-container.sunset .sky-cloud::before,
+#sky-container.sunset .sky-cloud::after {
+    background: rgba(255, 250, 244, 0.98);
 }
 
 .sky-cloud::before {
@@ -340,21 +441,56 @@ header p {
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    z-index: 3;
+}
+
+#sky-layout {
+    width: min(1320px, 94vw);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+}
+
+#side-video {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    order: 2;
+    position: relative;
+    overflow: visible;
+    width: var(--video-frame-width);
+}
+
+.video-frame {
+    width: var(--video-frame-width);
+    aspect-ratio: 9 / 16;
+    background: #ffffff;
+    padding: var(--video-frame-pad);
+    border-radius: var(--video-frame-radius);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
 }
 
 #cloud-frame {
-    position: relative;
-    width: min(820px, 86vw);
-    height: min(480px, 60vh);
+    width: 100%;
+    height: 100%;
     background: #ffffff;
-    border-radius: 140px;
-    padding: 28px;
+    border-radius: var(--video-frame-radius);
+    padding: var(--video-frame-pad);
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
     opacity: 0;
     transform: translateY(10px) scale(0.82);
     animation: cloudArrive 1.2s ease-out forwards 0.6s;
-    pointer-events: auto;
+    pointer-events: none;
     isolation: isolate;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 #cloud-frame::before,
@@ -368,17 +504,17 @@ header p {
 }
 
 #cloud-frame::before {
-    width: 180px;
-    height: 180px;
-    top: -85px;
-    left: 80px;
+    width: clamp(110px, 14vw, 160px);
+    height: clamp(110px, 14vw, 160px);
+    top: -55px;
+    left: 20px;
 }
 
 #cloud-frame::after {
-    width: 220px;
-    height: 220px;
-    top: -105px;
-    right: 90px;
+    width: clamp(130px, 16vw, 190px);
+    height: clamp(130px, 16vw, 190px);
+    top: -70px;
+    right: 20px;
 }
 
 .cloud-bubble {
@@ -386,51 +522,218 @@ header p {
     background: #ffffff;
     border-radius: 50%;
     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.12);
-    z-index: 1;
+    z-index: 3;
 }
 
 .bubble-1 {
-    width: 150px;
-    height: 150px;
-    top: -70px;
-    left: 140px;
+    width: clamp(70px, 9vw, 100px);
+    height: clamp(70px, 9vw, 100px);
+    top: -34px;
+    left: 26px;
 }
 
 .bubble-2 {
-    width: 200px;
-    height: 200px;
-    top: -90px;
-    left: 330px;
+    width: clamp(90px, 11vw, 125px);
+    height: clamp(90px, 11vw, 125px);
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .bubble-3 {
-    width: 160px;
-    height: 160px;
-    top: -65px;
-    right: 110px;
+    width: clamp(70px, 9vw, 100px);
+    height: clamp(70px, 9vw, 100px);
+    top: -34px;
+    right: 26px;
 }
 
 #cloud-video {
     width: 100%;
     height: 100%;
-    background: #f5fbff;
-    border-radius: 110px;
-    padding: 16px;
+    background: transparent;
+    border-radius: calc(var(--video-frame-radius) - 8px);
     overflow: hidden;
     opacity: 0;
     transform: scale(0.7);
     animation: cloudVideoPop 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 5.2s;
-    pointer-events: auto;
-    z-index: 2;
+    pointer-events: none;
+    z-index: 1;
 }
 
 #final-video {
     width: 100%;
     height: 100%;
     display: block;
-    border-radius: 90px;
-    background: #0b1620;
-    object-fit: contain;
+    border-radius: 18px;
+    background: #000000;
+    object-fit: cover;
+    object-position: center;
+}
+
+#cloud-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+#hint-area {
+    flex: 1;
+    position: relative;
+    min-width: 280px;
+    min-height: min(70vh, 560px);
+    height: 100%;
+    pointer-events: auto;
+    order: 1;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+}
+
+.play-hint {
+    position: absolute;
+    top: 50%;
+    right: 8%;
+    left: 8%;
+    width: auto;
+    max-width: none;
+    color: #ff2f74;
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3.8rem, 8.5vw, 7.2rem);
+    font-weight: 700;
+    line-height: 1.05;
+    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-50%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+.play-hint.show {
+    opacity: 1;
+    transform: translateY(-50%);
+}
+
+.play-hint span {
+    display: block;
+}
+
+.hint-arrow {
+    position: absolute;
+    right: -10px;
+    top: -30px;
+    width: min(560px, 70vw);
+    height: auto;
+    opacity: 0;
+    transform: rotate(-6deg);
+    transform-origin: 70% 70%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    pointer-events: none;
+}
+
+#play-hint.show + .hint-arrow {
+    opacity: 1;
+}
+
+.valentine-prompt {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 6%;
+    gap: 26px;
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.valentine-prompt.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.valentine-title {
+    color: #ff2f74;
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(4.4rem, 10vw, 9rem);
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.02;
+    text-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+}
+
+.valentine-title span {
+    display: block;
+}
+
+.valentine-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.valentine-btn {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 34px;
+    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.valentine-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
+}
+
+.valentine-btn.yes {
+    background: #ff2f74;
+    color: #ffffff;
+}
+
+.valentine-btn.no {
+    background: #ffffff;
+    color: #ff2f74;
+}
+
+.cloud-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: #ffffff;
+    color: #ff4d88;
+    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+    font-weight: 700;
+    text-transform: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    pointer-events: auto;
+}
+
+
+.cloud-btn:hover {
+    background: #fff4fa;
+    transform: translateY(-4px) scale(1.03);
+}
+
+.cloud-btn:focus-visible {
+    outline: 3px solid rgba(253, 121, 168, 0.6);
+    outline-offset: 4px;
+}
+
+.cloud-btn.active {
+    background: #ffe3ef;
+    color: #ff2f74;
 }
 
 @keyframes drift {
@@ -440,6 +743,22 @@ header p {
 
     to {
         transform: translateX(140vw);
+    }
+}
+
+@keyframes duckFly {
+    0% {
+        transform: translateX(0) translateY(0) scale(var(--duck-scale)) rotate(var(--duck-tilt));
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(140vw) translateY(-18px) scale(var(--duck-scale)) rotate(var(--duck-tilt));
+        opacity: 0;
     }
 }
 
@@ -459,6 +778,22 @@ header p {
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+@keyframes arianaFall {
+    0% {
+        transform: translateY(-5vh) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh) translateX(var(--drift, 0px)) rotate(8deg);
+        opacity: 0;
     }
 }
 
@@ -502,7 +837,7 @@ header p {
     z-index: 20;
 }
 
-button {
+.controls button {
     background: var(--romantic-red);
     color: white;
     border: none;
@@ -517,12 +852,18 @@ button {
     text-transform: uppercase;
 }
 
-button:hover {
+.controls button:hover {
     background: var(--soft-pink);
     transform: translateY(-3px) scale(1.05);
 }
 
 @media (max-width: 768px) {
+    :root {
+        --video-frame-width: min(240px, 70vw);
+        --video-frame-radius: 22px;
+        --video-frame-pad: 10px;
+    }
+
     header h1 {
         font-size: 2.5rem;
     }
@@ -532,54 +873,87 @@ button:hover {
         height: 180px !important;
     }
 
-    #cloud-frame {
-        width: 320px;
-        height: 220px;
-        border-radius: 70px;
-        padding: 14px;
-    }
-
     #cloud-video {
-        border-radius: 50px;
-        padding: 10px;
+        border-radius: calc(var(--video-frame-radius) - 6px);
     }
 
     #final-video {
-        border-radius: 40px;
+        border-radius: calc(var(--video-frame-radius) - 10px);
+    }
+
+    #sky-layout {
+        width: min(520px, 92vw);
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    #hint-area {
+        min-height: 220px;
+        width: 100%;
+    }
+
+    .play-hint {
+        left: 50%;
+        top: 0;
+        transform: translate(-50%, 0);
+        text-align: center;
+        font-size: clamp(2.8rem, 9vw, 3.6rem);
+    }
+
+    .hint-arrow {
+        left: 50%;
+        top: -10px;
+        width: min(360px, 85vw);
+        transform: translateX(-50%);
+        transform-origin: 60% 60%;
+    }
+
+    .valentine-prompt {
+        align-items: center;
+        text-align: center;
+        padding: 0 4%;
+    }
+
+    .valentine-title {
+        font-size: clamp(3rem, 10vw, 4.2rem);
+    }
+
+    .valentine-actions {
+        justify-content: center;
+        width: 100%;
     }
 
     #cloud-frame::before {
-        width: 100px;
-        height: 100px;
-        top: -45px;
-        left: 45px;
+        width: 95px;
+        height: 95px;
+        top: -42px;
+        left: 18px;
     }
 
     #cloud-frame::after {
-        width: 120px;
-        height: 120px;
-        top: -60px;
-        right: 50px;
+        width: 115px;
+        height: 115px;
+        top: -56px;
+        right: 18px;
     }
 
     .bubble-1 {
-        width: 80px;
-        height: 80px;
-        top: -35px;
-        left: 60px;
+        width: 70px;
+        height: 70px;
+        top: -32px;
+        left: 18px;
     }
 
     .bubble-2 {
-        width: 110px;
-        height: 110px;
-        top: -50px;
-        left: 140px;
+        width: 90px;
+        height: 90px;
+        top: -44px;
     }
 
     .bubble-3 {
-        width: 90px;
-        height: 90px;
-        top: -40px;
-        right: 50px;
+        width: 70px;
+        height: 70px;
+        top: -32px;
+        right: 18px;
     }
 }

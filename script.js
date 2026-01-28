@@ -40,9 +40,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('startBtn');
     const resetBtn = document.getElementById('resetBtn');
     const heartsBg = document.getElementById('hearts-bg');
+    const video = document.getElementById('final-video');
+    const playBtn = document.getElementById('btn-play');
+    const repeatBtn = document.getElementById('btn-repeat');
+    const heartBtn = document.getElementById('btn-heart');
+    const rainContainer = document.getElementById('ariana-rain');
+    const playHint = document.getElementById('play-hint');
+    const skyCont = document.getElementById('sky-container');
+    const valentinePrompt = document.getElementById('valentine-prompt');
+    const yesBtn = document.getElementById('btn-yes');
+    const noBtn = document.getElementById('btn-no');
+    const noAudio = document.getElementById('no-audio');
+    const bgMusic = document.getElementById('bg-music');
 
     let currentIdx = 0;
     let popInterval;
+    let rainInterval;
+    let audioLocks = 0;
+    let videoLockActive = false;
+    let noLockActive = false;
 
     // Generate floating hearts
     function createHeart() {
@@ -60,6 +76,200 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setInterval(createHeart, 300);
+
+    function tryPlayBgMusic() {
+        if (!bgMusic || audioLocks > 0) {
+            return;
+        }
+        bgMusic.play().catch(() => {});
+    }
+
+    function lockBgMusic() {
+        if (!bgMusic) {
+            return;
+        }
+        if (audioLocks === 0 && !bgMusic.paused) {
+            bgMusic.pause();
+        }
+        audioLocks += 1;
+    }
+
+    function unlockBgMusic() {
+        if (!bgMusic) {
+            return;
+        }
+        audioLocks = Math.max(0, audioLocks - 1);
+        if (audioLocks === 0) {
+            tryPlayBgMusic();
+        }
+    }
+
+    function setBgVolume() {
+        if (bgMusic) {
+            bgMusic.volume = 0.6;
+        }
+    }
+
+    setBgVolume();
+    tryPlayBgMusic();
+
+    const resumeOnUserGesture = () => {
+        tryPlayBgMusic();
+        window.removeEventListener('click', resumeOnUserGesture);
+        window.removeEventListener('touchstart', resumeOnUserGesture);
+    };
+    window.addEventListener('click', resumeOnUserGesture);
+    window.addEventListener('touchstart', resumeOnUserGesture);
+
+    function setPlayIcon() {
+        if (!playBtn || !video) {
+            return;
+        }
+        playBtn.innerHTML = video.paused ? '&#9654;' : '&#10074;&#10074;';
+    }
+
+    function setRepeatState() {
+        if (!repeatBtn || !video) {
+            return;
+        }
+        repeatBtn.classList.toggle('active', video.loop);
+    }
+
+    function createArianaHeart() {
+        if (!rainContainer) {
+            return;
+        }
+        const heart = document.createElement('span');
+        heart.className = 'ariana-heart';
+        heart.innerHTML = '&#10084; ariana';
+
+        const left = Math.random() * 100;
+        const size = 14 + Math.random() * 12;
+        const duration = 4 + Math.random() * 3;
+        const drift = Math.round(Math.random() * 60 - 30);
+
+        heart.style.left = `${left}%`;
+        heart.style.fontSize = `${size}px`;
+        heart.style.animationDuration = `${duration}s`;
+        heart.style.setProperty('--drift', `${drift}px`);
+
+        rainContainer.appendChild(heart);
+        setTimeout(() => {
+            heart.remove();
+        }, duration * 1000);
+    }
+
+    function startArianaRain() {
+        if (rainInterval || !rainContainer) {
+            return;
+        }
+        rainInterval = setInterval(createArianaHeart, 220);
+    }
+
+    function stopArianaRain() {
+        if (rainInterval) {
+            clearInterval(rainInterval);
+            rainInterval = null;
+        }
+        if (rainContainer) {
+            rainContainer.innerHTML = '';
+        }
+    }
+
+    if (playBtn && video) {
+        playBtn.addEventListener('click', () => {
+            if (video.paused) {
+                video.play().catch(() => {});
+                if (playHint) {
+                    playHint.classList.remove('show');
+                }
+                if (valentinePrompt) {
+                    valentinePrompt.classList.add('show');
+                }
+                if (skyCont) {
+                    skyCont.classList.add('sunset');
+                }
+            } else {
+                video.pause();
+            }
+            setPlayIcon();
+        });
+
+        video.addEventListener('play', () => {
+            if (!videoLockActive) {
+                videoLockActive = true;
+                lockBgMusic();
+            }
+            setPlayIcon();
+        });
+        const releaseVideoLock = () => {
+            if (videoLockActive) {
+                videoLockActive = false;
+                unlockBgMusic();
+            }
+        };
+        video.addEventListener('pause', () => {
+            releaseVideoLock();
+            setPlayIcon();
+        });
+        video.addEventListener('ended', releaseVideoLock);
+        setPlayIcon();
+    }
+
+    if (repeatBtn && video) {
+        repeatBtn.addEventListener('click', () => {
+            video.loop = !video.loop;
+            setRepeatState();
+        });
+        setRepeatState();
+    }
+
+    if (heartBtn) {
+        heartBtn.addEventListener('click', () => {
+            const isActive = heartBtn.classList.toggle('active');
+            if (isActive) {
+                startArianaRain();
+            } else {
+                stopArianaRain();
+            }
+        });
+    }
+
+    if (noBtn) {
+        noBtn.addEventListener('click', () => {
+            if (!noAudio) {
+                return;
+            }
+            if (!noLockActive) {
+                noLockActive = true;
+                lockBgMusic();
+            }
+            noAudio.currentTime = 0;
+            noAudio.play().catch(() => {
+                if (noLockActive) {
+                    noLockActive = false;
+                    unlockBgMusic();
+                }
+            });
+        });
+    }
+
+    if (noAudio) {
+        noAudio.addEventListener('ended', () => {
+            if (noLockActive) {
+                noLockActive = false;
+                unlockBgMusic();
+            }
+        });
+    }
+
+    if (yesBtn) {
+        yesBtn.addEventListener('click', () => {
+            const message = 'TE AMO AMOR, SI QUIERO SER TU SAN VALENTIN \u2764\uFE0F\u2764\uFE0F\u2764\uFE0F';
+            const url = `https://wa.me/51915341333?text=${encodeURIComponent(message)}`;
+            window.location.href = url;
+        });
+    }
 
     function triggerFinalSurprise() {
         // Wait a bit after the last photo appears
@@ -98,13 +308,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             setTimeout(() => {
                                 finalMsg.classList.add('hidden');
                                 // Reveal sky wrapper for the cloud video scene
-                                const skyCont = document.getElementById('sky-container');
-                                skyCont.classList.remove('hidden');
+                                if (skyCont) {
+                                    skyCont.classList.remove('hidden');
+                                    skyCont.classList.remove('sunset');
+                                }
+                                if (playHint) {
+                                    playHint.classList.add('show');
+                                }
+                                if (valentinePrompt) {
+                                    valentinePrompt.classList.remove('show');
+                                }
 
-                                // Auto-play video after the cloud frame finishes popping in
+                                // Keep the video paused until the user presses play
                                 setTimeout(() => {
-                                    const video = document.getElementById('final-video');
-                                    video.play();
+                                    if (video) {
+                                        video.pause();
+                                        video.currentTime = 0;
+                                    }
+                                    setPlayIcon();
                                     resetBtn.style.display = 'inline-block';
                                     resetBtn.style.zIndex = "4000";
                                 }, 6200);
@@ -170,9 +391,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('final-message-container').classList.remove('fade-out');
 
         document.getElementById('sky-container').classList.add('hidden');
-        const video = document.getElementById('final-video');
-        video.pause();
-        video.currentTime = 0;
+        if (skyCont) {
+            skyCont.classList.remove('sunset');
+        }
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+        if (playHint) {
+            playHint.classList.remove('show');
+        }
+        if (valentinePrompt) {
+            valentinePrompt.classList.remove('show');
+        }
+        stopArianaRain();
+        if (heartBtn) {
+            heartBtn.classList.remove('active');
+        }
+        setPlayIcon();
+        setRepeatState();
 
         heartsBg.classList.remove('heart-fade-out');
         popInterval = setInterval(spawnPhoto, 400);
@@ -190,9 +427,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('final-message-container').classList.remove('fade-out');
 
         document.getElementById('sky-container').classList.add('hidden');
-        const video = document.getElementById('final-video');
-        video.pause();
-        video.currentTime = 0;
+        if (skyCont) {
+            skyCont.classList.remove('sunset');
+        }
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+        if (playHint) {
+            playHint.classList.remove('show');
+        }
+        if (valentinePrompt) {
+            valentinePrompt.classList.remove('show');
+        }
+        stopArianaRain();
+        if (heartBtn) {
+            heartBtn.classList.remove('active');
+        }
+        setPlayIcon();
+        setRepeatState();
 
         heartsBg.classList.remove('heart-fade-out');
         currentIdx = 0;
